@@ -2,6 +2,7 @@
   "name": "AVAIL-Stats",
   "custom": {},
   "plugins": [
+  	"serverless-cors-plugin",
     "ryTest"
   ]
 }
