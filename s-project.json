@@ -1,0 +1,7 @@
+{
+  "name": "AVAIL-Stats",
+  "custom": {},
+  "plugins": [
+    "ryTest"
+  ]
+}
