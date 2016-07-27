@@ -31,7 +31,7 @@ module.exports.respond = function(event,context,cb){
     })
 
 
-    cb(null,"hello world");
+    cb(null,[userCount,applicationCount,result.rows[result.rows.length-1].timestamp]);
 
     client.end(function (err) {
       if (err) throw err;
