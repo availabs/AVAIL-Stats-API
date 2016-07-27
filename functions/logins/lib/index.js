@@ -12,26 +12,10 @@ module.exports.respond = function(event,context,cb){
 
   var client = new Client(config);
   client.connect();
-  var query = client.query('Select * from login_stats', function(err, result) {
-
-    var userCount = {}
-
-    var applicationCount = {};
-
-    result.rows.forEach(row => {
-      if(!userCount[row.user]){
-        userCount[row.user] = 0;
-      }
-      userCount[row.user] = userCount[row.user] + 1;
-
-      if(!applicationCount[row.application]){
-        applicationCount[row.application] = 0;
-      }
-      applicationCount[row.application] = applicationCount[row.application] + 1;      
-    })
+  var query = client.query("SELECT COUNT(*), date_part('day', timestamp) as day, date_part('month', timestamp) as month FROM login_stats WHERE timestamp > current_date - interval '30' day GROUP BY day,month ORDER BY month, day", function(err, result) {
 
 
-    cb(null,[userCount,applicationCount,result.rows[result.rows.length-1].timestamp]);
+    cb(null,result.rows);
 
     client.end(function (err) {
       if (err) throw err;
