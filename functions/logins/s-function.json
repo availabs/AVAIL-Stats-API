@@ -15,15 +15,17 @@
   },
   "endpoints": [
     {
-      "path": "logins",
+      "path": "logins/{interval}",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
-      "requestParameters": {},
+      "requestParameters": { 
+        "integration.request.path.interval" : "method.request.path.interval"
+      },
       "requestTemplates": {
-        "application/json": ""
+        "application/json":"{\"interval\":\"$input.params('interval')\"}"
       },
       "responses": {
         "400": {

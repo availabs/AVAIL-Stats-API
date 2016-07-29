@@ -9,6 +9,7 @@ module.exports.respond = function(event,context,cb){
     database: 'AVAILstats',
   };
 
+  var intervalLength = event.interval;
 
   var client = new Client(config);
   client.connect();
@@ -17,7 +18,7 @@ module.exports.respond = function(event,context,cb){
     FROM login_stats \
     RIGHT OUTER JOIN (\
       SELECT \
-      GENERATE_SERIES( (NOW() - INTERVAL '30 day')::date, NOW()::date, '1 day')::date\
+      GENERATE_SERIES( (NOW() - INTERVAL '"+intervalLength+" day')::date, NOW()::date, '1 day')::date\
       AS series\
     ) AS dt \
     on date_trunc('day', timestamp) = dt.series\
