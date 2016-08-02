@@ -9,7 +9,7 @@ module.exports.respond = function(event,context,cb){
     database: 'AVAILstats',
   };
 
-  var intervalLength = event.interval;
+  var intervalLength = event.interval - 1;
 
   var client = new Client(config);
   client.connect();

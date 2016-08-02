@@ -15,17 +15,18 @@
   },
   "endpoints": [
     {
-      "path": "users/{interval}",
+      "path": "users/line/{lineInterval}/time/{timeSeriesInterval}",
       "method": "GET",
       "type": "AWS",
       "authorizationType": "none",
       "authorizerFunction": false,
       "apiKeyRequired": false,
       "requestParameters": { 
-        "integration.request.path.interval" : "method.request.path.interval"
+        "integration.request.path.lineInterval" : "method.request.path.lineInterval",
+        "integration.request.path.timeSeriesInterval" : "method.request.path.timeSeriesInterval"
       },
       "requestTemplates": {
-        "application/json":"{\"interval\":\"$input.params('interval')\"}"
+        "application/json":"{\"lineInterval\":\"$input.params('lineInterval')\",\"timeSeriesInterval\":\"$input.params('timeSeriesInterval')\"}"
       },
       "responses": {
         "400": {

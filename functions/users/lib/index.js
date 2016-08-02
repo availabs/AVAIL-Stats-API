@@ -9,29 +9,43 @@ module.exports.respond = function(event,context,cb){
     database: 'AVAILstats',
   };
 
-  var intervalLength = event.interval;
+  var lineInterval = event.lineInterval - 1;
+  var timeSeriesInterval = event.timeSeriesInterval-1;
 
   var client = new Client(config);
   client.connect();
   var query = client.query(
-    "SELECT dt.series, COUNT(timestamp)\
-    FROM login_stats \
-    RIGHT OUTER JOIN (\
-      SELECT \
-      GENERATE_SERIES( (NOW() - INTERVAL '"+intervalLength+" day')::date, NOW()::date, '1 day')::date\
-      AS series\
-    ) AS dt \
-    on date_trunc('day', timestamp) = dt.series\
-    GROUP BY dt.series\
-    ORDER BY dt.series ASC", 
+    "SELECT\
+        date_trunc('day',d1.timestamp) AS timestamp,\
+        COUNT(DISTINCT d2.full_user) Users\
+    FROM\
+    (\
+    SELECT \
+          GENERATE_SERIES( (NOW() - INTERVAL '"+timeSeriesInterval+" day')::date, NOW()::date, '1 day')::date\
+      as timestamp\
+    ) d1 \
+    LEFT OUTER JOIN \
+    (\
+        SELECT DISTINCT\
+            date_trunc('day', timestamp) AS timestamp,\
+      (\"user\", ip, user_agent) as full_user\
+        FROM\
+            login_stats\
+    ) d2\
+    ON d2.timestamp BETWEEN d1.timestamp - INTERVAL '"+lineInterval+" day' AND d1.timestamp\
+    GROUP BY\
+        d1.timestamp\
+    ORDER BY\
+        d1.timestamp ASC", 
     function(err, result) {
-      cb(null,result.rows);
+    cb(null,result.rows);
 
-      client.end(function (err) {
-        if (err) throw err;
-      });
+    client.end(function (err) {
+      if (err) throw err;
+    });
   });
 }
 
 //TO DEPLOY NEW FUNCTION
 //sls function deploy
+
